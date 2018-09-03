@@ -17,6 +17,6 @@
 
 char * docutf();
 
-char * run(FILE *fp, simple_vad *vad, struct cut_info *cut);
+int run(FILE *fp, simple_vad *vad, struct cut_info *cut);
 
 int add_period_activity(struct periods *per, int is_active, int is_last);

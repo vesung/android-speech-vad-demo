@@ -40,7 +40,20 @@ char * docutf() {
     return retmsg;
 }
 
-char* run(FILE *fp, simple_vad *vad, struct cut_info *cut) {
+int process_frame(int res, simple_vad *vad, int16_t *data, struct periods *per, struct cut_info *cut){
+    int is_last = (res == 1);
+    int is_active = process_vad(vad, data);
+    add_period_activity(per, is_active, is_last);
+    int vad_file_res = cut_add_vad_activity(cut, is_active, is_last, data);
+    if (vad_file_res < 0) {
+        printf("file write success %s\n", cut->result_filename);
+        __android_log_print(ANDROID_LOG_INFO, "main.c", "file write success %s\n", cut->result_filename);
+        strcat(retmsg, cut->result_filename);
+        strcat(retmsg, "66666\n");
+    }
+}
+
+int run(FILE *fp, simple_vad *vad, struct cut_info *cut) {
 
     int16_t data[FRAME_SIZE];
     int res = 0;
@@ -49,16 +62,16 @@ char* run(FILE *fp, simple_vad *vad, struct cut_info *cut) {
     while (res == 0) {
         res = read_int16_bytes(fp, data);
         if (res <= 1) {
-            int is_last = (res == 1);
-            int is_active = process_vad(vad, data);
-            add_period_activity(per, is_active, is_last);
-            int vad_file_res = cut_add_vad_activity(cut, is_active, is_last);
-            if (vad_file_res < 0) {
-                printf("file write success %s\n", cut->result_filename);
-                __android_log_print(ANDROID_LOG_INFO, "main.c", "file write success22 %s\n", cut->result_filename);
-                strcat(retmsg, cut->result_filename);
-                strcat(retmsg, "\n");
-            }
+            process_frame(res, vad, data, per, cut);
+//            int is_last = (res == 1);
+//            int is_active = process_vad(vad, data);
+//            add_period_activity(per, is_active, is_last);
+//            int vad_file_res = cut_add_vad_activity(cut, is_active, is_last);
+//            if (vad_file_res < 0) {
+//                printf("file write success %s\n", cut->result_filename);
+//                __android_log_print(ANDROID_LOG_INFO, "main.c", "file write success %s\n", cut->result_filename);
+//                retmsg = retmsg || cut->result_filename || "\n";
+//            }
         } else if (ferror(fp)) {
             printf("read failed  ferror result  : %d\n", ferror(fp));
             __android_log_print(ANDROID_LOG_INFO, "main.c", "read failed  ferror result  : %d\n", ferror(fp));

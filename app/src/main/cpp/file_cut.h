@@ -13,7 +13,7 @@ struct cut_info {
     int is_pervious_active;
     int is_contain_active;
     int previous_along_frames;
-    FILE *fp;
+//    FILE *fp;
     int current_frame;
     int cut_begin_frame;
     char result_filename[200];
@@ -24,7 +24,7 @@ struct cut_info {
 
 struct cut_info *cut_info_create(FILE *fp);
 
-int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last);
+int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last, uint16_t *current_frame_data);
 
 void cut_info_free(struct cut_info *cut);
 

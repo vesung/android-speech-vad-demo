@@ -4,7 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.github.vesung.speechvaddemo.R;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,4 +29,24 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+
+
+
+    void read_int16_bytes(InputStream is, short data) {
+        int MULTI = 1; // 1, 2, 3
+        int FRAME_SIZE = 160 * MULTI;
+        int shortlength = 2;// 2字节，16位
+
+        try {
+            byte[] datab = new byte[FRAME_SIZE * shortlength];
+            while(is.read() != 0){
+                is.read(datab);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
