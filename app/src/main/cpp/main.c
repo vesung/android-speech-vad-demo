@@ -23,7 +23,7 @@ char * docutf() {
     }
     __android_log_print(ANDROID_LOG_INFO, "main.c", "22222222222222222222222");
     FILE *fp2 = fopen(filename, "rb");
-    struct cut_info *cut = cut_info_create(fp2);
+    struct cut_info *cut = cut_info_create();
     snprintf(cut->output_filename_prefix, sizeof(cut->output_filename_prefix), "%s",
              output_filename_prefix);
     snprintf(cut->output_file_dir, sizeof(cut->output_file_dir), "%s",
@@ -49,7 +49,7 @@ int process_frame(int res, simple_vad *vad, int16_t *data, struct periods *per, 
         printf("file write success %s\n", cut->result_filename);
         __android_log_print(ANDROID_LOG_INFO, "main.c", "file write success %s\n", cut->result_filename);
         strcat(retmsg, cut->result_filename);
-        strcat(retmsg, "66666\n");
+        strcat(retmsg, "76666\n");
     }
 }
 

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "common.h"
 #include "stdint.h"
+#include <android/log.h>
 
 struct cut_info {
     int is_pervious_active;
@@ -22,7 +23,7 @@ struct cut_info {
 
 };
 
-struct cut_info *cut_info_create(FILE *fp);
+struct cut_info *cut_info_create();
 
 int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last, uint16_t *current_frame_data);
 

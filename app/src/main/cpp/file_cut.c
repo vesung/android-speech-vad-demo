@@ -15,12 +15,14 @@ static inline int cut_write_file(struct cut_info *cut, int frames, uint16_t *fra
         FILE *res_file = fopen(cut->result_filename, "wb+");
         if (res_file == NULL) {
             fprintf(stderr, "file open failed, %s\n", cut->result_filename);
+            __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "file open failed, %s\n", cut->result_filename);
             return 3;
         }
         int written = fwrite(frame_data, 1, size, res_file);
         fclose(res_file);
         if (written != size) {
             fprintf(stderr, "written is %d, readed is %d\n", written, size);
+            __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "written is %d, readed is %d\n", written, size);
             return 2;
         }
         // file_total += written;
@@ -93,7 +95,7 @@ static inline int add_changed(struct cut_info *cut, int is_active, uint16_t *cur
     return frame;
 }
 
-struct cut_info *cut_info_create(FILE *fp) {
+struct cut_info *cut_info_create() {
     struct cut_info *cut = calloc(1, sizeof(struct cut_info));
 //    cut->fp = fp;
     return cut;
