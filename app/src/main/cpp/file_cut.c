@@ -4,10 +4,23 @@
 
 #include <stdlib.h>
 #include "file_cut.h"
+#include "main.h"
 
+extern int16_t *data_list;
+extern int data_list_index;
 // static size_t file_total = 0;
 
-static inline int cut_write_file(struct cut_info *cut, int frames, uint16_t *frame_data) {
+
+static inline int16_t * data_list_2string() {
+    int16_t liststr[30000];
+    memset(liststr, 0, 30000);
+    for(int i=0; i<=data_list_index; i++){
+        liststr[i] = data_list[i];
+    }
+    return liststr;
+}
+
+static inline int cut_write_file(struct cut_info *cut, int frames) {
     int size = frames * FRAME_SIZE * sizeof(uint16_t);
 //    uint16_t buffer[size];
 //    int readed = fread(buffer, 1, size, cutfp);
@@ -18,7 +31,8 @@ static inline int cut_write_file(struct cut_info *cut, int frames, uint16_t *fra
             __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "file open failed, %s\n", cut->result_filename);
             return 3;
         }
-        int written = fwrite(frame_data, 1, size, res_file);
+        __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "----data=%s\n", data_list_2string());
+        int written = fwrite(data_list, 1, size, res_file);
         fclose(res_file);
         if (written != size) {
             fprintf(stderr, "written is %d, readed is %d\n", written, size);
@@ -35,7 +49,7 @@ static inline int cut_write_file(struct cut_info *cut, int frames, uint16_t *fra
 
 }
 
-static inline int cut_frame(struct cut_info *cut, int last_frame, int force, uint16_t *current_frame_data) {
+static inline int cut_frame(struct cut_info *cut, int last_frame, int force) {
     int frames = last_frame - cut->cut_begin_frame;
     if (force || (frames >= CAL_FRAME_BY_TIME(FILE_CUT_MIN_MS))) {
         if (last_frame == 109) {
@@ -48,22 +62,24 @@ static inline int cut_frame(struct cut_info *cut, int last_frame, int force, uin
                  CAL_FRAME_BY_FRAME(last_frame) - 1, cut->is_contain_active ? "A" : "I");
 
 //        struct cut_info *cut, int frames, uint16_t *frame_data
-        cut_write_file(cut, frames, current_frame_data);
+        cut_write_file(cut, frames);
         cut->is_pervious_active = 0;
         cut->is_contain_active = 0;
         cut->cut_begin_frame = last_frame;
+        data_list_init();
+
         return 0;
     } else {
         return 1;
     }
 }
 
-static inline int add_continued(struct cut_info *cut, int is_active, uint16_t *current_frame_data) {
+static inline int add_continued(struct cut_info *cut, int is_active) {
     if (!is_active && cut->is_contain_active) {
         // 有响声，之后连续静音
         int diff = cut->previous_along_frames - CAL_FRAME_BY_TIME(FILE_CUT_SILENCE_AFTER_ACTIVE_MS);
         if (diff >= 0) {
-            int res = cut_frame(cut, cut->current_frame, 0, current_frame_data);
+            int res = cut_frame(cut, cut->current_frame, 0);
             if (res == 0) {
                 int frame = -1 * (cut->current_frame);
                 cut->previous_along_frames = 1;
@@ -76,14 +92,14 @@ static inline int add_continued(struct cut_info *cut, int is_active, uint16_t *c
 }
 
 
-static inline int add_changed(struct cut_info *cut, int is_active, uint16_t *current_frame_data) {
+static inline int add_changed(struct cut_info *cut, int is_active) {
     int frame = 0;
     if (is_active) {
         // 连续静音，之后遇到响声
         if (cut->previous_along_frames > CAL_FRAME_BY_TIME(FILE_CUT_SILENCE_BEFORE_ACTIVE_MS)) {
             int c_frames =
                     cut->current_frame - CAL_FRAME_BY_TIME(FILE_CUT_SILENCE_BEFORE_ACTIVE_MS);
-            int res = cut_frame(cut, c_frames, 0, current_frame_data);
+            int res = cut_frame(cut, c_frames, 0);
             if (res == 0) {
                 frame = -1 * (c_frames);
             }
@@ -102,16 +118,16 @@ struct cut_info *cut_info_create() {
 }
 
 
-int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last, uint16_t *current_frame_data) {
+int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last) {
     int res;
     if (is_last ||
         (cut->current_frame - cut->cut_begin_frame == CAL_FRAME_BY_TIME(FILE_CUT_MAX_MS))) {
-        cut_frame(cut, cut->current_frame, is_last, current_frame_data);
+        cut_frame(cut, cut->current_frame, is_last);
         res = -1 * cut->current_frame;
     } else if (cut->is_pervious_active == is_active) {
-        res = add_continued(cut, is_active, current_frame_data);
+        res = add_continued(cut, is_active);
     } else {
-        res = add_changed(cut, is_active, current_frame_data);
+        res = add_changed(cut, is_active);
         if (is_active) {
             cut->is_contain_active = 1;
         }

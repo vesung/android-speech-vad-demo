@@ -30,7 +30,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
+    public native void vadOpen() throws Exception;
 
+    public native void vadClose() throws Exception;
+
+    public native int vadProcessFrame(byte[] frame);
 
 
     void read_int16_bytes(InputStream is, short data) {

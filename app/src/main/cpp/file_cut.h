@@ -25,7 +25,7 @@ struct cut_info {
 
 struct cut_info *cut_info_create();
 
-int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last, uint16_t *current_frame_data);
+int cut_add_vad_activity(struct cut_info *cut, int is_active, int is_last);
 
 void cut_info_free(struct cut_info *cut);
 

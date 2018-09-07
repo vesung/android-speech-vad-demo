@@ -1,7 +1,7 @@
 # android-speech-vad-demo
 
 
-## 简介
+## 环境及原理
 ### 简介
 
 项目地址： https://github.com/vesung/android-speech-vad-demo
