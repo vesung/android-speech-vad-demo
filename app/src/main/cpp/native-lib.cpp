@@ -42,7 +42,7 @@ Java_com_github_vesung_speechvaddemo_MainActivity_vadOpen(JNIEnv *env, jobject i
 
     vad_open();
     jniEnv = env;
-    event_reg_cut_file_vent(cut_file_listener_func);
+//    event_reg_cut_file_vent(cut_file_listener_func);
 
 }
 

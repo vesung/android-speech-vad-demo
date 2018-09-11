@@ -35,12 +35,6 @@ static inline int cut_write_file(struct cut_info *cut, int frames) {
 
 }
 
-static void fire_cut_file_event(struct cut_info *cut, int frames) {
-    int size = frames * FRAME_SIZE * sizeof(uint16_t);
-    char* filename = cut->result_filename;
-    event_fire_cut_file_event(filename, size);
-}
-
 static inline int cut_frame(struct cut_info *cut, int last_frame, int force) {
     int frames = last_frame - cut->cut_begin_frame;
     if (force || (frames >= CAL_FRAME_BY_TIME(FILE_CUT_MIN_MS))) {
@@ -55,7 +49,7 @@ static inline int cut_frame(struct cut_info *cut, int last_frame, int force) {
 
 //        struct cut_info *cut, int frames, uint16_t *frame_data
 //        cut_write_file(cut, frames);
-        fire_cut_file_event(cut, frames);
+//        fire_cut_file_event(cut, frames);
         cut->is_pervious_active = 0;
         cut->is_contain_active = 0;
         cut->cut_begin_frame = last_frame;
