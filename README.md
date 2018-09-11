@@ -8,7 +8,7 @@
 
 集成 [webrtc](https://webrtc.org/) 开源项目，vad模块，具体算法*GMM*(Gaussian Mixture Model)。
 
-此demo可以粗略地按照静音切分音频。
+此demo可以粗略地按照静音切分音频。  
 
 ### 原理
 
