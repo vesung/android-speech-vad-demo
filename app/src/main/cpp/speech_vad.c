@@ -1,9 +1,12 @@
-#include <string.h>
 #include "speech_vad.h"
 
 simple_vad *vad;
 struct periods *per;
 struct cut_info *cut;
+
+const char output_filename_prefix[] = "16k_1.pcm"; // 保存的文件名
+const char output_dir[] = "/sdcard/cmakedemo/output_pcm"; // 保存的目录
+
 
 /**
  * 处理音频数据
@@ -12,19 +15,24 @@ struct cut_info *cut;
  *         -2：表示vad未初始化，请先执行vad_open
  *         0：
  */
-int vad_process_frame(int16_t *frame){
+char* vad_process_frame(int16_t *frame){
     if(vad == NULL)
-        return -2;
+        return "-1";
 
-    process_frame(0, vad, frame, per, cut);
+    char* ret = process_frame(0, vad, frame, per, cut);
 
-    return 1;
+    return ret;
 }
 
-int vad_open(){
+int vad_open() {
     vad = simple_vad_create();
     per = periods_create();
-    cut = cut_info_create;
+    cut = cut_info_create();
+    snprintf(cut->output_filename_prefix, sizeof(cut->output_filename_prefix), "%s",
+             output_filename_prefix);
+    snprintf(cut->output_file_dir, sizeof(cut->output_file_dir), "%s",
+             output_dir);
+
 }
 
 int vad_close(){

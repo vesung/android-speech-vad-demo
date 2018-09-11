@@ -9,6 +9,7 @@
 #include "common.h"
 #include "stdint.h"
 #include <android/log.h>
+#include "event.h"
 
 struct cut_info {
     int is_pervious_active;

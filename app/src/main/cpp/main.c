@@ -40,16 +40,19 @@ char * docutf() {
     return retmsg;
 }
 
-int process_frame(int res, simple_vad *vad, int16_t *data, struct periods *per, struct cut_info *cut){
+char* process_frame(int res, simple_vad *vad, int16_t *data, struct periods *per, struct cut_info *cut){
     int is_last = (res == 1);
     int is_active = process_vad(vad, data);
     add_period_activity(per, is_active, is_last);
-    int vad_file_res = cut_add_vad_activity(cut, is_active, is_last, data);
+    int vad_file_res = cut_add_vad_activity(cut, is_active, is_last);
     if (vad_file_res < 0) {
         printf("file write success %s\n", cut->result_filename);
         __android_log_print(ANDROID_LOG_INFO, "main.c", "file write success %s\n", cut->result_filename);
         strcat(retmsg, cut->result_filename);
         strcat(retmsg, "76666\n");
+        return cut->result_filename;
+    }else{
+        return "0";
     }
 }
 

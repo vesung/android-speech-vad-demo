@@ -17,6 +17,8 @@
 
 char * docutf();
 
+char* process_frame(int res, simple_vad *vad, int16_t *data, struct periods *per, struct cut_info *cut);
+
 int run(FILE *fp, simple_vad *vad, struct cut_info *cut);
 
 int add_period_activity(struct periods *per, int is_active, int is_last);

@@ -1,10 +1,26 @@
 #include <jni.h>
 #include <string>
-#include "speech_vad.h"
 
 extern "C"{
 #include "main.h"
 #include "speech_vad.h"
+}
+
+JNIEnv *jniEnv;
+
+void cut_file_listener_func(char * filename, int size){
+    __android_log_print(ANDROID_LOG_INFO, "speech_vad.c", "cutfile_event %s\n", filename);
+
+    // 初始化listener
+    jclass listener_cls = jniEnv->FindClass("com/github/vesung/speechvaddemo/VadListener");
+    jmethodID initMethod = jniEnv->GetMethodID(listener_cls, "<init>", "()V");
+    jobject listener = jniEnv->NewObject(listener_cls, initMethod);
+
+//    jmethodID mid = jniEnv->GetMethodID(listener_cls, "cutfile", "()V");
+    jmethodID mid = jniEnv->GetMethodID(listener_cls, "cutfile", "(Ljava/lang/String;I)V");
+    jstring str = jniEnv->NewStringUTF(filename);
+    jniEnv->CallVoidMethod(listener, mid, str, size);
+
 }
 
 
@@ -25,15 +41,18 @@ JNIEXPORT void JNICALL
 Java_com_github_vesung_speechvaddemo_MainActivity_vadOpen(JNIEnv *env, jobject instance) {
 
     vad_open();
+    jniEnv = env;
+    event_reg_cut_file_vent(cut_file_listener_func);
+
 }
 
 extern "C"
-JNIEXPORT jint JNICALL
+JNIEXPORT jstring JNICALL
 Java_com_github_vesung_speechvaddemo_MainActivity_vadProcessFrame(JNIEnv *env, jobject instance,
                                                                   jbyteArray frame_) {
     jbyte *frame = env->GetByteArrayElements(frame_, NULL);
     jsize len = env->GetArrayLength(frame_);
-    int is_active = -1;
+    char* is_active = "";
     if(len > 0){
         int bytesize = sizeof(jbyte) * len;
         int16_t *int16_frame = (int16_t *) malloc(bytesize);
@@ -43,7 +62,8 @@ Java_com_github_vesung_speechvaddemo_MainActivity_vadProcessFrame(JNIEnv *env, j
     }
 
     env->ReleaseByteArrayElements(frame_, frame, 0);
-    return is_active;
+
+    return env->NewStringUTF(is_active);
 }
 
 extern "C"

@@ -4,25 +4,11 @@
 
 #include <stdlib.h>
 #include "file_cut.h"
-#include "main.h"
 
-extern int16_t *data_list;
-extern int data_list_index;
-// static size_t file_total = 0;
-
-
-static inline int16_t * data_list_2string() {
-    int16_t liststr[30000];
-    memset(liststr, 0, 30000);
-    for(int i=0; i<=data_list_index; i++){
-        liststr[i] = data_list[i];
-    }
-    return liststr;
-}
 
 static inline int cut_write_file(struct cut_info *cut, int frames) {
     int size = frames * FRAME_SIZE * sizeof(uint16_t);
-//    uint16_t buffer[size];
+    uint16_t buffer[size];
 //    int readed = fread(buffer, 1, size, cutfp);
     if (size > 0) {
         FILE *res_file = fopen(cut->result_filename, "wb+");
@@ -31,8 +17,8 @@ static inline int cut_write_file(struct cut_info *cut, int frames) {
             __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "file open failed, %s\n", cut->result_filename);
             return 3;
         }
-        __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "----data=%s\n", data_list_2string());
-        int written = fwrite(data_list, 1, size, res_file);
+        __android_log_print(ANDROID_LOG_ERROR, "file_cut.c", "----data=%s\n");
+        int written = fwrite(buffer, 1, size, res_file);
         fclose(res_file);
         if (written != size) {
             fprintf(stderr, "written is %d, readed is %d\n", written, size);
@@ -49,6 +35,12 @@ static inline int cut_write_file(struct cut_info *cut, int frames) {
 
 }
 
+static void fire_cut_file_event(struct cut_info *cut, int frames) {
+    int size = frames * FRAME_SIZE * sizeof(uint16_t);
+    char* filename = cut->result_filename;
+    event_fire_cut_file_event(filename, size);
+}
+
 static inline int cut_frame(struct cut_info *cut, int last_frame, int force) {
     int frames = last_frame - cut->cut_begin_frame;
     if (force || (frames >= CAL_FRAME_BY_TIME(FILE_CUT_MIN_MS))) {
@@ -62,11 +54,11 @@ static inline int cut_frame(struct cut_info *cut, int last_frame, int force) {
                  CAL_FRAME_BY_FRAME(last_frame) - 1, cut->is_contain_active ? "A" : "I");
 
 //        struct cut_info *cut, int frames, uint16_t *frame_data
-        cut_write_file(cut, frames);
+//        cut_write_file(cut, frames);
+        fire_cut_file_event(cut, frames);
         cut->is_pervious_active = 0;
         cut->is_contain_active = 0;
         cut->cut_begin_frame = last_frame;
-        data_list_init();
 
         return 0;
     } else {

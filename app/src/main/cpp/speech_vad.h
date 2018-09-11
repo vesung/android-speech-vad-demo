@@ -7,6 +7,7 @@
 #include <android/log.h>
 #include <string.h>
 #include "main.h"
+#include "event.h"
 
 #ifndef CMAKEDEMO_MAIN_H
 #define CMAKEDEMO_MAIN_H
@@ -15,7 +16,7 @@
 
 
 
-int vad_process_frame(int16_t *frame);
+char* vad_process_frame(int16_t *frame);
 
 int vad_open();
 
