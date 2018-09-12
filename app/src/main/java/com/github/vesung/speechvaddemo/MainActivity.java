@@ -173,13 +173,26 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+//    public native String stringFromJNI();
+//
+//    public native void vadOpen() throws Exception;
+//
+//    public native void vadClose() throws Exception;
+//
+//    public native String vadProcessFrame(byte[] frame);
 
-    public native void vadOpen() throws Exception;
+    public  String stringFromJNI(){
+        return "";
+    }
+    public void vadOpen(){
 
-    public native void vadClose() throws Exception;
+    }
+    public void vadClose(){
 
-    public native String vadProcessFrame(byte[] frame);
+    }
+    public String vadProcessFrame(byte[] buffer){
+        return "";
+    }
 
 
     void read_int16_bytes(InputStream is, short data) {
