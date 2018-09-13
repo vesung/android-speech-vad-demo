@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.github.vesung.speechvaddemo.asr.AsrListener;
-import com.github.vesung.speechvaddemo.asr.AsrLiveEngine;
+import com.github.vesung.vadsdk.asr.AsrListener;
+import com.github.vesung.vadsdk.asr.AsrLiveEngine;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

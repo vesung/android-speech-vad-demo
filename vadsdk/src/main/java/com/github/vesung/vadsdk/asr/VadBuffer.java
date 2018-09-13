@@ -1,6 +1,5 @@
-package com.github.vesung.speechvaddemo.asr;
+package com.github.vesung.vadsdk.asr;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**

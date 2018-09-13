@@ -1,4 +1,4 @@
-package com.github.vesung.speechvaddemo.asr;
+package com.github.vesung.vadsdk.asr;
 
 import android.util.Base64;
 import android.util.Log;
@@ -20,7 +20,7 @@ import okhttp3.Response;
 
 public class AsrLiveEngine {
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("vadsdk");
     }
 
     // MULTI = 1 2 3 webrtc vad可以设置分别为以10ms 20ms 30ms作为包

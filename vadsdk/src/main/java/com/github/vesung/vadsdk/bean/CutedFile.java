@@ -1,4 +1,4 @@
-package com.github.vesung.speechvaddemo.bean;
+package com.github.vesung.vadsdk.bean;
 
 import java.util.List;
 

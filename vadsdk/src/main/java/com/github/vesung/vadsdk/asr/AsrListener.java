@@ -1,4 +1,4 @@
-package com.github.vesung.speechvaddemo.asr;
+package com.github.vesung.vadsdk.asr;
 
 /**
  * 语音识别事件监听

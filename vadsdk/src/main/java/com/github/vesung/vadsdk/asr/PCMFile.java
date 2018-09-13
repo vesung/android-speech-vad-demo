@@ -1,4 +1,4 @@
-package com.github.vesung.speechvaddemo.asr;
+package com.github.vesung.vadsdk.asr;
 
 /**
  * Created by wangjing.dc on 2018/9/12.
